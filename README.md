@@ -61,28 +61,12 @@ Para desplegar esta aplicacion en un entorno de produccion real, basta con subir
 
 ## Construido con
 
-* HTML5 - Estructuracion semantica de las vistas operativas de la planta.
-* CSS3 - Diseño adaptativo basado en Custom Properties y layouts de cuadricula (Grid/Flexbox).
-* JavaScript Vanilla (ES6+) - Logica de control de negocio, manipulacion dinamica del DOM y programacion asincrona.
+* HTML - Estructuracion semantica de las vistas operativas de la planta.
+* CSS - Diseño adaptativo basado en Custom Properties y layouts de cuadricula (Grid/Flexbox).
+* JavaScript Vanilla - Logica de control de negocio, manipulacion dinamica del DOM y programacion asincrona.
 * Web Components API - Encapsulamiento y reutilizacion de la interfaz de navegacion del sistema.
 * Firebase Realtime Database REST API - Persistencia de datos distribuida en la nube por medio de peticiones Fetch HTTP.
-
-## Contribuyendo
-
-Por favor lee el archivo de buenas practicas internas para conocer los detalles de las convenciones de codigo adoptadas en este proyecto y el proceso para el envio de propuestas de mejora en los modulos de planta.
-
-## Wiki
-
-Puedes encontrar documentacion ampliada sobre el modelado de las formulas JSON y el comportamiento del motor de transformacion de stocks en la seccion de documentacion interna del proyecto.
-
-## Versionado
-
-Usamos un control de versiones semantico basado en hitos de desarrollo. Para revisar los estados estables del prototipo final, puedes consultar el historial de confirmaciones de este repositorio.
 
 ## Autores
 
 * Raymond Javier Zabala Sanchez - Desarrollo completo de la arquitectura del frontend, integracion de logica asincrona y diseño del sistema de base de datos en la nube.
-
-## Licencia
-
-Este proyecto esta bajo una Licencia Academica de Uso Educativo y Profesional Privado - mira el archivo de terminos para conocer mas detalles sobre la propiedad del codigo fuente.
