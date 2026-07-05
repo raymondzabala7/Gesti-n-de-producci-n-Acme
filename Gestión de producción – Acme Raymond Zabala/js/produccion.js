@@ -1,8 +1,9 @@
+const URL_BASE_DATOS = "https://raymond-68cd6-default-rtdb.firebaseio.com";
 window.produccion = [];
 
 window.cargarHistorial = async () => {
     try {
-        const res = await fetch(`${window.URL_LOGIN}/produccion.json`);
+        const res = await fetch(`${URL_BASE_DATOS}/produccion.json`);
         const data = await res.json();
         
         if (data) {
@@ -12,10 +13,12 @@ window.cargarHistorial = async () => {
         }
 
         const tbody = document.getElementById('historyBody');
-        tbody.innerHTML = '';
-        window.produccion.forEach(o => {
-            tbody.innerHTML += `<tr><td><b># ${o.consecutivo}</b></td><td>${o.producto}</td><td>${o.cantidad} U</td></tr>`;
-        });
+        if (tbody) {
+            tbody.innerHTML = '';
+            window.produccion.forEach(o => {
+                tbody.innerHTML += `<tr><td><b># ${o.consecutivo}</b></td><td>${o.producto}</td><td>${o.cantidad} U</td></tr>`;
+            });
+        }
 
         return window.produccion.length;
     } catch (err) {
@@ -30,7 +33,7 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
     const cantidad = parseInt(document.getElementById('exeQty').value);
 
     try {
-        const invRes = await fetch(`${window.URL_LOGIN}/inventario.json`);
+        const invRes = await fetch(`${URL_BASE_DATOS}/inventario.json`);
         let invData = await invRes.json();
         if (!invData) return alert("El inventario maestro se encuentra vacío.");
 
@@ -38,7 +41,7 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
         const productoTerminado = listaInv.find(p => p.codigo === codigo);
 
         if (!productoTerminado || !productoTerminado.formula) {
-            return alert("Código erróneo o no corresponde a producto con receta vinculada.");
+            return alert("Código erróneo o no corresponde a un producto con receta/fórmula vinculada.");
         }
 
         let errorInsumos = false;
@@ -50,10 +53,10 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
 
             if (!insumo || (insumo.stock || 0) < totalRequerido) {
                 errorInsumos = true;
-                alert(`Error: Stock deficiente para [ ${materiaCod} ]. Requerido: ${totalRequerido}, En almacén: ${insumo ? insumo.stock : 0}`);
+                alert(`Error: Stock deficiente para la materia prima [ ${materiaCod} ]. Requerido: ${totalRequerido}, En almacén: ${insumo ? insumo.stock : 0}`);
                 break;
             }
-            logInsumos += `• Descontados ${totalRequerido} de [ ${materiaCod} ]<br>`;
+            logInsumos += `• Descontados ${totalRequerido} unidades de [ ${materiaCod} ]<br>`;
         }
 
         if (errorInsumos) return;
@@ -66,7 +69,7 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
 
         productoTerminado.stock = (productoTerminado.stock || 0) + cantidad;
 
-        await fetch(`${window.URL_LOGIN}/inventario.json`, {
+        await fetch(`${URL_BASE_DATOS}/inventario.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(listaInv)
@@ -77,17 +80,17 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
 
         window.produccion.push({ consecutivo: consecutivoNuevo, producto: codigo, cantidad });
 
-        await fetch(`${window.URL_LOGIN}/produccion.json`, {
+        await fetch(`${URL_BASE_DATOS}/produccion.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(window.produccion)
         });
 
         document.getElementById('resumen').innerHTML = `
-            <strong>Orden Exitosa (#${consecutivoNuevo})</strong><br><br>
-            <b>Producto:</b> ${productoTerminado.nombre}<br>
-            <b>Cantidad:</b> ${cantidad} unidades.<br><br>
-            <b>Insumos Usados:</b><br>${logInsumos}
+            <strong>Orden Exitosa Proceso (#${consecutivoNuevo})</strong><br><br>
+            <b>Producto Fabricado:</b> ${productoTerminado.nombre || codigo}<br>
+            <b>Cantidad Fabricada:</b> ${cantidad} unidades.<br><br>
+            <b>Resumen de Materia Prima Usada:</b><br>${logInsumos}
         `;
 
         document.getElementById('prodForm').reset();

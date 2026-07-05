@@ -2,29 +2,53 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>ACME - Login</title>
+    <title>ACME - Acceso</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div>
-        <h2>ACME Macondo</h2>
-        <form id="loginForm">
+        <h2 id="formTitle">ACME Macondo</h2>
+        <p id="formDescription" style="display: none;">Completa tus datos para crear tu cuenta y acceder directamente al sistema.</p>
+        
+        <form id="authForm">
             <div>
                 <label>Número de Identificación</label>
-                <input type="text" id="loginId" required>
+                <input type="text" id="authId" required>
             </div>
+            
+            <div id="registerFields" style="display: none;">
+                <div style="margin-bottom: 10px;">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="regName">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label>Cargo asignado</label>
+                    <select id="regRole">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Operario">Operario</option>
+                        <option value="Supervisor">Supervisor</option>
+                    </select>
+                </div>
+            </div>
+
             <div>
                 <label>Contraseña</label>
-                <input type="password" id="loginPass" required>
+                <input type="password" id="authPass" required>
             </div>
-            <button type="submit">Ingresar</button>
+
+            <div id="confirmPassField" style="display: none; margin-bottom: 10px;">
+                <label>Confirmar Contraseña</label>
+                <input type="password" id="authPassConfirm">
+            </div>
+
+            <button type="submit" id="submitBtn">Ingresar</button>
         </form>
-        <div>
-            <span>¿No tienes una cuenta?</span>
-            <a href="registro.html">Regístrate aquí</a>
+        
+        <div style="margin-top: 15px;">
+            <span id="switchText">¿No tienes una cuenta?</span>
+            <a href="#" id="switchLink">Regístrate aquí</a>
         </div>
     </div>
-    <script src="js/config.js"></script>
     <script src="js/login.js"></script>
 </body>
 </html>

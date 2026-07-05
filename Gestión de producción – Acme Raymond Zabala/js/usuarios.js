@@ -1,9 +1,10 @@
+const URL_BASE_DATOS = "https://raymond-68cd6-default-rtdb.firebaseio.com";
 window.users = [];
 window.indexEditando = -1;
 
 window.cargarUsuarios = async () => {
     try {
-        const res = await fetch(`${window.URL_LOGIN}/users.json`);
+        const res = await fetch(`${URL_BASE_DATOS}/users.json`);
         const data = await res.json();
         
         if (data) {
@@ -55,7 +56,7 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        await fetch(`${window.URL_LOGIN}/users.json`, {
+        await fetch(`${URL_BASE_DATOS}/users.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(window.users)
@@ -85,7 +86,7 @@ window.eliminarUser = async (index) => {
     if (confirm('¿Eliminar permanentemente este usuario de la tabla y base de datos?')) {
         window.users.splice(index, 1);
         try {
-            await fetch(`${window.URL_LOGIN}/users.json`, {
+            await fetch(`${URL_BASE_DATOS}/users.json`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(window.users)
