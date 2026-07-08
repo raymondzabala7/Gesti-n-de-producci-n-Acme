@@ -42,9 +42,13 @@ switchLink.addEventListener('click', (e) => {
 
 document.getElementById('authForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const identificacion = document.getElementById('authId').value.trim();
     const password = document.getElementById('authPass').value;
+
+    if (identificacion === "") {
+        return alert("La identificación no puede estar vacía o contener solo espacios.");
+    }
 
     try {
         const res = await fetch(`${URL_BASE_DATOS}/users.json`);
@@ -67,8 +71,12 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
 
         } else {
             const nombre = regNameInput.value.trim();
-            const cargo = document.getElementById('regRole').value;
+            const cargo = document.getElementById('regRole').value.trim();
             const confirmPass = regPassConfirmInput.value;
+
+            if (nombre === "" || cargo === "" || password.trim() === "") {
+                return alert("Ningún campo puede estar vacío o contener solo espacios en blanco.");
+            }
 
             if (password !== confirmPass) { 
                 return alert("Las contraseñas no coinciden"); 
