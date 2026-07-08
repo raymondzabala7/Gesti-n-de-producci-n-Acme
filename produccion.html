@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>ACME - Producción</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/selector-productos.js" defer></script>
+    <script src="js/produccion.js" defer></script>
 </head>
 <body>
     <script>
@@ -14,27 +16,49 @@
         });
     </script>
     <main-nav></main-nav>
+    
     <div class="container grid">
         <div class="card">
             <h3>Nueva Orden de Producción</h3>
             <form id="prodForm">
-                <div class="form-group"><label>Código del Producto a Fabricar</label><input type="text" id="exeCode" required></div>
-                <div class="form-group"><label>Cantidad de Unidades</label><input type="number" id="exeQty" min="1" required></div>
-                <button type="submit" class="btn">Procesar y Descontar</button>
+                <div class="form-group">
+                    <label for="receta-select">Selecciona el Producto a Fabricar</label>
+                    <selector-productos id="receta-select" tipo-filtro="producto"></selector-productos>
+                </div>
+                <div class="form-group">
+                    <label for="exeQty">Cantidad de Unidades</label>
+                    <input type="number" id="exeQty" min="1" placeholder="Ej. 10" required>
+                </div>
+                
+                <h4>Insumos requeridos e Inventario Real:</h4>
+                <div id="detalles-receta" style="margin-bottom: 15px; font-size: 0.9em;"></div>
+
+                <button type="submit" class="btn" id="btn-producir">Procesar y Descontar</button>
             </form>
         </div>
+        
         <div class="card">
             <h3>Resumen del Último Proceso</h3>
             <div id="resumen" style="background:#f1f5f9; padding:15px; border-radius:6px; min-height:100px;">No se han registrado procesos todavía.</div>
         </div>
     </div>
+    
     <div class="container">
         <div class="card">
             <h3>Historial de Procesos (Consecutivos)</h3>
-            <table><thead><tr><th>ID Consecutivo</th><th>Producto Creado</th><th>Cantidad</th></tr></thead><tbody id="historyBody"></tbody></table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Consecutivo</th>
+                        <th>Producto Creado</th>
+                        <th>Cantidad</th>
+                        <th>Materia Prima Consumida</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
         </div>
     </div>
     <script src="js/config.js"></script>
-    <script src="js/produccion.js"></script>
 </body>
 </html>
