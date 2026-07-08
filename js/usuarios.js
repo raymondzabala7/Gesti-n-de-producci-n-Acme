@@ -39,13 +39,20 @@ window.dibujarTabla = () => {
 
 document.getElementById('userForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+
     const identificacion = document.getElementById('userIdNum').value.trim();
     const nombre = document.getElementById('userName').value.trim();
     const cargo = document.getElementById('userRole').value;
     const password = document.getElementById('userPass').value;
     const confirm = document.getElementById('userPassConfirm').value;
 
-    if (password !== confirm) { return alert("Las contraseñas no coinciden"); }
+    if (identificacion === "" || nombre === "" || password.trim() === "") {
+        return alert("Ningún campo puede estar vacío o contener solo espacios en blanco.");
+    }
+
+    if (password !== confirm) { 
+        return alert("Las contraseñas no coinciden"); 
+    }
 
     const userObj = { identificacion, nombre, cargo, password };
 
