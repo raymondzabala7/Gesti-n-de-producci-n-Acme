@@ -1,6 +1,7 @@
 const URL_BASE_DATOS = "https://raymond-68cd6-default-rtdb.firebaseio.com";
 window.produccion = [];
 let inventarioLocal = [];
+
 async function fetchInventario() {
     try {
         const res = await fetch(`${URL_BASE_DATOS}/inventario.json`);
@@ -69,7 +70,7 @@ window.cargarHistorial = async () => {
         const tbody = document.getElementById('historyBody');
         if (tbody) {
             tbody.innerHTML = '';
-            window.produccion.reverse().forEach(o => {
+            [...window.produccion].reverse().forEach(o => {
                 let detalleInsumos = o.insumosDetalle ? o.insumosDetalle : "N/A";
                 tbody.innerHTML += `
                     <tr>
@@ -85,6 +86,74 @@ window.cargarHistorial = async () => {
     } catch (err) {
         console.error(err);
         return 0;
+    }
+};
+
+window.actualizarTablaTop5 = async () => {
+    const tbodyTop = document.getElementById('reporteTop5Body');
+    if (!tbodyTop) return;
+
+    try {
+        const [resProd, resInv] = await Promise.all([
+            fetch(`${URL_BASE_DATOS}/produccion.json`),
+            fetch(`${URL_BASE_DATOS}/inventario.json`)
+        ]);
+
+        const dataProduccion = await resProd.json();
+        const dataInventario = await resInv.json();
+
+        if (!dataProduccion) {
+            tbodyTop.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b;">No hay registros de producción.</td></tr>`;
+            return;
+        }
+
+        const listaProduccion = Array.isArray(dataProduccion) ? dataProduccion.filter(p => p !== null) : Object.values(dataProduccion);
+        const listaInventario = Array.isArray(dataInventario) ? dataInventario.filter(i => i !== null) : Object.values(dataInventario);
+
+        const consolidado = {};
+        listaProduccion.forEach(orden => {
+            const prodKey = orden.producto;
+            if (!consolidado[prodKey]) {
+                consolidado[prodKey] = { nombre: prodKey, cantidadTotal: 0, codigoOriginal: null };
+            }
+            consolidado[prodKey].cantidadTotal += parseInt(orden.cantidad, 10) || 0;
+        });
+
+        for (const key in consolidado) {
+            const match = listaInventario.find(i => i.nombre === key || i.codigo === key);
+            if (match) {
+                consolidado[key].codigoOriginal = match.codigo;
+                consolidado[key].nombre = match.nombre;
+            }
+        }
+
+        const top5 = Object.values(consolidado).sort((a, b) => b.cantidadTotal - a.cantidadTotal).slice(0, 5);
+
+        tbodyTop.innerHTML = '';
+        top5.forEach((item, index) => {
+            let clasePuesto = index === 0 ? 'puesto-1' : index === 1 ? 'puesto-2' : index === 2 ? 'puesto-3' : 'puesto-resto';
+            let insumosHTML = '<span style="color: #94a3b8; font-style: italic;">Sin receta</span>';
+            
+            const productoMaestro = listaInventario.find(i => i.codigo === item.codigoOriginal);
+            if (productoMaestro && productoMaestro.formula) {
+                insumosHTML = `<ul class="lista-insumos-reporte">`;
+                Object.entries(productoMaestro.formula).forEach(([materiaCod, cantUnitaria]) => {
+                    const insumo = listaInventario.find(i => i.codigo === materiaCod);
+                    insumosHTML += `<li><b>${insumo ? insumo.nombre : materiaCod}</b>: ${cantUnitaria * item.cantidadTotal} U</li>`;
+                });
+                insumosHTML += `</ul>`;
+            }
+
+            tbodyTop.innerHTML += `
+                <tr>
+                    <td style="text-align: center;"><span class="puesto-badge ${clasePuesto}">${index + 1}</span></td>
+                    <td><b>${item.nombre}</b><br><small style="color:#64748b;">${item.codigoOriginal || ''}</small></td>
+                    <td style="text-align: center;"><span class="badge" style="background:#dcfce7; color:#15803d;">${item.cantidadTotal}</span></td>
+                    <td>${insumosHTML}</td>
+                </tr>`;
+        });
+    } catch (err) {
+        console.error("Error actualizando Top 5:", err);
     }
 };
 
@@ -129,6 +198,7 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
         }
 
         if (errorInsumos) return;
+        
         for (const [materiaCod, cantNecesaria] of Object.entries(productoTerminado.formula)) {
             const totalRequerido = cantNecesaria * cantidad;
             const insumo = listaInv.find(i => i.codigo === materiaCod);
@@ -168,9 +238,10 @@ document.getElementById('prodForm').addEventListener('submit', async (e) => {
 
         document.getElementById('prodForm').reset();
         document.getElementById('detalles-receta').innerHTML = '';
-        
+
         await fetchInventario();
         await window.cargarHistorial();
+        await window.actualizarTablaTop5(); 
     } catch (err) {
         alert("Fallo interno en el motor de producción.");
     } finally {
@@ -190,6 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cantidadInput.addEventListener('input', mostrarDetallesReceta);
     }
 });
-
 fetchInventario();
 window.cargarHistorial();
+window.actualizarTablaTop5();
