@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>ACME - Producción</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/reportes-layout.css">
     <script src="js/selector-productos.js" defer></script>
     <script src="js/produccion.js" defer></script>
 </head>
@@ -43,7 +44,7 @@
         </div>
     </div>
     
-    <div class="container">
+    <div class="container grid-reporte">
         <div class="card">
             <h3>Historial de Procesos (Consecutivos)</h3>
             <table>
@@ -56,6 +57,26 @@
                     </tr>
                 </thead>
                 <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Top 5 - Productos Más Fabricados</h3>
+            <p style="color: #64748b; font-size: 0.85em; margin-bottom: 15px;">Calculado dinámicamente en tiempo real según el volumen total producido.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">Puesto</th>
+                        <th>Producto</th>
+                        <th style="text-align: center;">Total U</th>
+                        <th>Insumos Consumidos (Consolidado)</th>
+                    </tr>
+                </thead>
+                <tbody id="reporteTop5Body">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #94a3b8;">Cargando reporte...</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
